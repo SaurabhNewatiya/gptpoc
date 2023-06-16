@@ -70,7 +70,7 @@ jobs:
               async function run() {
                 const newComment = await octokit.issues.createComment({
                   owner: `SaurabhNewatiya`,
-                  repo: githubContext.repo,
+                  repo: `gptpoc`,
                   issue_number: githubContext.issue.number,
                   body: comment
                 });
