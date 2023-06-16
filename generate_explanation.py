@@ -4,7 +4,7 @@ import requests
 import sys
 import json
 
-openai.api_key = os.environ['OPENAI_API_KEY']  # Env variable injected from Github secrets
+openai.api_key = os.environ['POC_API_KEY']  # Env variable injected from Github secrets
 
 def generate_explanation(changes):
     prompt = f"Changes: {changes}\n\nExplain the changes in pull request:"
