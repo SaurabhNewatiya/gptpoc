@@ -61,15 +61,14 @@ jobs:
           script: |
               const { Octokit } = require('@octokit/rest');
               const { context: githubContext } = require('@actions/github');
-          
-              console.log(`Comment added: ${githubContext.repo.owner}`);
-              console.log(`Comment added: ${githubContext.repo.data}`);
-
+        
               const token = process.env.GH_TKN;
               const octokit = new Octokit({ auth: token });
 
               const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
-
+              const own = `SaurabhNewatiya`;
+              const rep = `gptpoc`;
+              
               async function run() {
                 const newComment = await octokit.issues.createComment({
                   owner: own,
