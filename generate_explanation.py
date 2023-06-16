@@ -8,13 +8,14 @@ openai.api_key = os.environ['POC_API_KEY']  # Env variable injected from Github 
 
 def generate_explanation(changes):
     prompt = f"Changes: {changes}\n\nExplain the changes in pull request:"
+    messages = [
+        {"role": "system", "content": "You are a code reviewer."},
+        {"role": "user", "content": prompt},
+    ]
 
-    response = openai.Completion.create(
+    response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a code reviewer."},
-            {"role": "user", "content": prompt},
-        ],
+        messages=messages,
         max_tokens=200,
         temperature=0.7,
         n=1,
@@ -24,6 +25,7 @@ def generate_explanation(changes):
 
     explanation = response.choices[0].message.content.strip()
     return explanation
+
 
 # Get the pull request information from GitHub API
 pull_request_number = os.environ["PR_NUMBER"]
