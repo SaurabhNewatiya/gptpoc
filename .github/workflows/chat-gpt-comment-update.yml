@@ -39,13 +39,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { Octokit } = require('@octokit/rest');
+            const { Octokit } = require('@octokit/core');
             const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
             const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ steps.explanation.outputs.explanation }}`;
 
             async function run() {
-              const newComment = await octokit.rest.issues.createComment({
+              const newComment = await octokit.request('POST /repos/:owner/:repo/issues/:issue_number/comments', {
                 owner: '${{ github.repository_owner }}',
                 repo: '${{ github.repository }}',
                 issue_number: '${{ github.event.pull_request.number }}',
