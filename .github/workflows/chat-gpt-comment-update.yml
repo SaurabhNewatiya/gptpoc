@@ -4,7 +4,6 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
-  
 jobs:
   chatgpt_add_comment:
     runs-on: ubuntu-latest
@@ -14,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
           python-version: '3.x'
 
@@ -27,54 +26,34 @@ jobs:
       - name: Generate explanation
         id: explanation
         env:
-          POC_API_KEY: ${{ secrets.POC_API_KEY }} # Accessing the secret value from github secrets
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Github Token
-          PR_NUMBER: ${{ github.event.number }}
-          GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
-        run: |
-          OPENAI_EXPLANATION=$(python generate_explanation.py)
-          echo "OPENAI_EXPLANATION<<EOF" >> $GITHUB_ENV
-          echo $OPENAI_EXPLANATION >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          
-          echo "===================================="
-          echo $OPENAI_EXPLANATION
-          echo "===================================="
-
-      - name: Use Explanation in Workflow
-        run: |
-          echo "Explanation: ${{ env.OPENAI_EXPLANATION }}"
-        env:
+          POC_API_KEY: ${{ secrets.POC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-      
-      - name: Install @actions/github and @octokit/rest
-        run: npm install @actions/github @octokit/rest
+        run: |
+          python generate_explanation.py > explanation.txt
+          echo "::set-output name=explanation::$(cat explanation.txt)"
 
       - name: Add Comment to Pull Request
-        uses: actions/github-script@v6
-        env:
-          GH_TKN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-              const { Octokit } = require('@octokit/rest');
-              const { context: githubContext } = require('@actions/github');
+            const { Octokit } = require('@octokit/rest');
+            const { context } = require('@actions/github');
 
-              const token = process.env.GH_TKN;
-              const octokit = new Octokit({ auth: token });
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
-              const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
+            const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ steps.explanation.outputs.explanation }}`;
 
-              async function run() {
-                const newComment = await octokit.issues.createComment({
-                  ...githubContext.repo,
-                  issue_number: githubContext.issue.number,
-                  body: comment
-                });
+            async function run() {
+              const newComment = await octokit.issues.createComment({
+                ...context.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
 
-                console.log(`Comment added: ${newComment.data.html_url}`);
-              }
+              console.log(`Comment added: ${newComment.data.html_url}`);
+            }
 
-              run();
+            run();
