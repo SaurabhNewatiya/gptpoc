@@ -62,8 +62,8 @@ jobs:
               const { Octokit } = require('@octokit/rest');
               const { context: githubContext } = require('@actions/github');
           
-              console.log(`Comment added: ${githubContext.owner}`);
-              console.log(`Comment added: ${githubContext.repo}`);
+              console.log(`Comment added: ${githubContext.repo.owner}`);
+              console.log(`Comment added: ${githubContext.repo.data}`);
 
               const token = process.env.GH_TKN;
               const octokit = new Octokit({ auth: token });
