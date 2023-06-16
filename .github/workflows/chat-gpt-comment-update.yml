@@ -27,7 +27,7 @@ jobs:
       - name: Generate explanation
         id: explanation
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} # Accessing the secret value from github secrets
+          POC_API_KEY: ${{ secrets.POC_API_KEY }} # Accessing the secret value from github secrets
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Github Token
           PR_NUMBER: ${{ github.event.number }}
           GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
