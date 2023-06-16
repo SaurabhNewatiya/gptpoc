@@ -28,7 +28,7 @@ jobs:
         env:
           POC_API_KEY: ${{ secrets.POC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           python generate_explanation.py > explanation.txt
@@ -40,16 +40,15 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { Octokit } = require('@octokit/rest');
-            const { context } = require('@actions/github');
-
             const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
             const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ steps.explanation.outputs.explanation }}`;
 
             async function run() {
-              const newComment = await octokit.issues.createComment({
-                ...context.repo,
-                issue_number: context.issue.number,
+              const newComment = await octokit.rest.issues.createComment({
+                owner: '${{ github.repository_owner }}',
+                repo: '${{ github.repository }}',
+                issue_number: '${{ github.event.pull_request.number }}',
                 body: comment
               });
 
