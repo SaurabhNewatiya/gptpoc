@@ -19,6 +19,10 @@ jobs:
       with:
         python-version: 3.8
       
+    - name: Install openai module
+      run: |
+        pip install openai
+      
     - name: Run Code and Generate Explanation
       id: explanation
       env:
