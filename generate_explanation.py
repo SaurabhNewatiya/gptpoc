@@ -10,16 +10,19 @@ def generate_explanation(changes):
     prompt = f"Changes: {changes}\n\nExplain the changes in pull request:"
 
     response = openai.Completion.create(
-        engine="gpt-3.5-turbo",
-        prompt=prompt,
-        max_tokens=200,       # Read more here https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a code reviewer."},
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=200,
         temperature=0.7,
         n=1,
         stop=None,
         timeout=30,
     )
 
-    explanation = response.choices[0].text.strip()
+    explanation = response.choices[0].message.content.strip()
     return explanation
 
 # Get the pull request information from GitHub API
