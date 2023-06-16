@@ -35,20 +35,20 @@ jobs:
           echo "::set-output name=explanation::$(cat explanation.txt)"
 
       - name: Add Comment to Pull Request
-        uses: actions/github-script@v4
+        uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { Octokit } = require('@octokit/core');
+            const { Octokit } = require("@octokit/rest");
             const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
             const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ steps.explanation.outputs.explanation }}`;
 
             async function run() {
-              const newComment = await octokit.request('POST /repos/:owner/:repo/issues/:issue_number/comments', {
-                owner: '${{ github.repository_owner }}',
-                repo: '${{ github.repository }}',
-                issue_number: '${{ github.event.pull_request.number }}',
+              const newComment = await octokit.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
                 body: comment
               });
 
@@ -56,3 +56,4 @@ jobs:
             }
 
             run();
+
