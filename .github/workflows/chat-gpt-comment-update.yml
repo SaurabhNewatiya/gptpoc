@@ -61,10 +61,9 @@ jobs:
           script: |
               const { Octokit } = require('@octokit/rest');
               const { context: githubContext } = require('@actions/github');
-            
-              const { owner: own , repo: rep } = githubContext.repo;
-              console.log(own);
-              console.log(rep);
+          
+              console.log(githubContext.repo[0]);
+              console.log(githubContext.repo[1]);
 
               const token = process.env.GH_TKN;
               const octokit = new Octokit({ auth: token });
