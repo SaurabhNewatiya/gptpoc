@@ -61,6 +61,9 @@ jobs:
           script: |
               const { Octokit } = require('@octokit/rest');
               const { context: githubContext } = require('@actions/github');
+              
+              console.log(githubContext.repo);
+              console.log(githubContext.owner);
               const { own, rep } = githubContext.repo;
 
               const token = process.env.GH_TKN;
@@ -70,8 +73,8 @@ jobs:
 
               async function run() {
                 const newComment = await octokit.issues.createComment({
-                  owner: own,
-                  repo: rep,
+                  owner: githubContext.owner,
+                  repo: githubContext.repo,
                   issue_number: githubContext.issue.number,
                   body: comment
                 });
