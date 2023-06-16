@@ -67,9 +67,9 @@ jobs:
 
               const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
 
-              function run() {
+              async function run() {
                 const newComment = await octokit.issues.createComment({
-                  ...githubContext.repo,
+                  repo: githubContext.repo,
                   issue_number: githubContext.issue.number,
                   body: comment
                 });
