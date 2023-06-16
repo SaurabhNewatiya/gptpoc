@@ -35,17 +35,14 @@ jobs:
         echo "::set-output name=explanation::${explanation}"
       
     - name: Add Comment to Pull Request
-      uses: actions/github-script@v4
+      uses: actions/github-script@3
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const explanation = '${{ steps.explanation.outputs.explanation }}';
-          const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-          const { owner, repo } = github.context.repo;
-          const { number } = github.context.payload.pull_request;
-          octokit.issues.createComment({
-            owner: owner,
-            repo: repo,
-            issue_number: number,
-            body: explanation
+          const github = context.repo;
+          const issue_number = context.payload.pull_request.number;
+          const body = `${{ steps.explanation.outputs.explanation }}`;
+          github.issues.createComment({
+            ...github,
+            issue_number,
+            body
           });
