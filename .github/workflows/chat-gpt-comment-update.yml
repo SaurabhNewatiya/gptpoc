@@ -61,21 +61,16 @@ jobs:
           script: |
               const { Octokit } = require('@octokit/rest');
               const { context: githubContext } = require('@actions/github');
-        
               const token = process.env.GH_TKN;
               const octokit = new Octokit({ auth: token });
-              
               const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
-              
               async function run() {
                 const newComment = await octokit.issues.createComment({
-                  owner: githubContext.owner,
+                  owner: `SaurabhNewatiya`,
                   repo: githubContext.repo,
                   issue_number: githubContext.issue.number,
                   body: comment
                 });
-
                 console.log(`Comment added: ${newComment.data.html_url}`);
               }
-
               run();
