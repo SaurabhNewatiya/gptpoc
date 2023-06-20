@@ -63,14 +63,17 @@ jobs:
               const { context: githubContext } = require('@actions/github');
         
               const token = process.env.GH_TKN;
+              
+              console.log('0');
+              
               const octokit = new Octokit({ auth: token });
               
-              console.log(`1`);
+              console.log('1');
               
               console.log(githubContext.repo.owner);
               console.log(githubContext.repo.repo);
               
-              console.log(`2`);
+              console.log('2');
 
               const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
               
