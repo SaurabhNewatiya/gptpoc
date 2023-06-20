@@ -66,13 +66,11 @@ jobs:
               const octokit = new Octokit({ auth: token });
 
               const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
-              const own = `SaurabhNewatiya`;
-              const rep = `gptpoc`;
               
               async function run() {
                 const newComment = await octokit.issues.createComment({
-                  owner: own,
-                  repo: rep,
+                  owner: githubContext.payload.repository.owner.login,
+                  repo: githubContext.payload.repository.name,
                   issue_number: githubContext.issue.number,
                   body: comment
                 });
