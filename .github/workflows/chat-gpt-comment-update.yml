@@ -65,14 +65,15 @@ jobs:
               const token = process.env.GH_TKN;
               const octokit = new Octokit({ auth: token });
               
-              const {repo, owner} = githubContext.repo;
+              console.log(typeof githubContext);
+              console.log(typeof githubContext.repo);
       
               const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
               
               async function run() {
                 const newComment = await octokit.issues.createComment({
-                  owner: owner,
-                  repo: repo,
+                  owner: githubContext.owner,
+                  repo: githubContext.repo,
                   issue_number: githubContext.issue.number,
                   body: comment
                 });
