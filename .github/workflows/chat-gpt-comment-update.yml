@@ -64,6 +64,9 @@ jobs:
         
               const token = process.env.GH_TKN;
               const octokit = new Octokit({ auth: token });
+              
+              console.log(githubContext.payload.repository.owner.login);
+              console.log(githubContext.payload.repository.name);
 
               const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
               
