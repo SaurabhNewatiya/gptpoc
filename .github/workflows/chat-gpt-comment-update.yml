@@ -45,24 +45,11 @@ jobs:
       - name: Install @actions/github and @octokit/rest
         run: npm install @actions/github @octokit/rest
       - name: Add Comment to Pull Request
-        uses: actions/github-script@v6
-        env:
-          GH_TKN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-              const { Octokit } = require('@octokit/rest');
-              const { context: githubContext } = require('@actions/github');
-              const token = process.env.GH_TKN;
-              const octokit = new Octokit({ auth: token });
-              const comment = `Explanation of Changes (powered by chatgpt):\n\n${{ env.OPENAI_EXPLANATION }}`;
-              async function run() {
-                const newComment = await octokit.issues.createComment({
-                  owner: "SaurabhNewatiya",
-                  repo: "gptpoc",
-                  issue_number: githubContext.issue.number,
-                  body: comment
-                });
-                console.log(`Comment added: ${newComment.data.html_url}`);
-              }
-              run();
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "body": "This is my comment on the pull request."
+            }' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/${{ github.event.pull_request.number }}/comments"
