@@ -4,23 +4,28 @@ import requests
 import sys
 import json
 
-openai.api_key = os.environ['OPENAI_API_KEY']  # Env variable injected from Github secrets
+openai.api_key = os.environ['POC_API_KEY']  # Env variable injected from Github secrets
 
 def generate_explanation(changes):
     prompt = f"Changes: {changes}\n\nExplain the changes in pull request:"
+    messages = [
+        {"role": "system", "content": "You are a code reviewer."},
+        {"role": "user", "content": prompt},
+    ]
 
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo",
-        prompt=prompt,
-        max_tokens=200,       # Read more here https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        max_tokens=200,
         temperature=0.7,
         n=1,
         stop=None,
         timeout=30,
     )
 
-    explanation = response.choices[0].text.strip()
+    explanation = response.choices[0].message.content.strip()
     return explanation
+
 
 # Get the pull request information from GitHub API
 pull_request_number = os.environ["PR_NUMBER"]
